@@ -24,7 +24,7 @@ class Rocket:
         
         if self.rect.colliderect(self.player.player_rect):
             play_sound('assets/audio/sfx/rocket.ogg', self.volume)
-            self.player.velocity.y = -300
+            self.player.velocity.y = -1000
             self.powerups.remove(self)
 
 
