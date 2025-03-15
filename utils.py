@@ -14,6 +14,7 @@ PINK = (255, 0, 255)
 PURPLE = (128, 0, 128)
 BLACK = (0, 0, 0)
 GRAY = (128, 128, 128)
+BROWN = (191, 104, 67)
 
 
 def draw_text(window, position, text, font_size, color = WHITE, anti_alias = False, center = True):
@@ -68,7 +69,7 @@ class Timer:
 
 
 class Button:
-    def __init__(self, window, position, text, font_size, text_color, color = WHITE):
+    def __init__(self, window, position, text, font_size, text_color = BLACK, color = WHITE, toggle = False):
         self.window = window
         self.position = position
         
@@ -82,10 +83,16 @@ class Button:
         self.original_color = color
         self.highlight_color = (color[0] - 100, color[1] - 100, color[2] - 100)
         self.color = self.original_color
+        
+        self.toggle = toggle
+        self.toggled = False
     
     
     def draw(self):
-        pygame.draw.rect(self.window, self.color, self.button_rect, border_radius = 100)
+        if self.toggled:
+            pygame.draw.rect(self.window, self.highlight_color, self.button_rect, border_radius = 100)
+        else:
+            pygame.draw.rect(self.window, self.color, self.button_rect, border_radius = 100)
         draw_text(self.window, (self.position[0], self.position[1]), self.text, self.font_size, self.text_color)
     
     
@@ -96,6 +103,8 @@ class Button:
                     self.color = self.highlight_color
                     return False
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    if self.toggle:
+                        self.toggled = not self.toggled
                     play_sound('assets/audio/sfx/button.ogg', volume * 0.5)
                     return True
         else:
