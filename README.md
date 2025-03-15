@@ -1,5 +1,5 @@
 # Sling Fling Tower
-2025.3.11.L QoL Update
+2025.3.14.M Platform Update
 
 ## Controls
 Click and hold mouse button to aim.  Let go to sling in that direction.
@@ -8,75 +8,41 @@ Click and hold mouse button to aim.  Let go to sling in that direction.
 ### Rocket
 Propels you upwards.
 
-### Multi-Sling
+### Multi-Fling
 Allows you to sling even if you are in the air.
 
 ### Feather
 Lowers gravity, allowing you to sling higher.
 
 
-# 2025.3.11.L Changelog
+# 2025.3.14.M Changelog
 ## Notable Changes
-Refactored entire game!
+Fixed “elevator” bug!
 
-No more anti-aliasing!  Play in all its pixelated glory!
+New platforms!  More challenges await!
 
-Uncapped FPS!  Run your game as fast as you want!
+Time Trial Gamemode!  See how high you can get in a certain amount of time!
 
-Audio!  Jam and feel the game with music and sound effects!
-
-Infinite Platforms!  Play as long as you like!
-
-Smooth camera movement!  Don't feel jank anymore!
+Player colors!  Express yourself in-game however you like!
 
 ## Full Changelog
 ### Scenes/Screens
-Game Over screen (Before, game sent you to menu when you died)
+Gamemode select screen
 
-Settings screen (FPS cap and such)
+Time Trial Gamemode
 
 ### Visual
-Player eyes look up, down, left, and right depending on velocity values
+FPS counter when playing
 
-Powerups hide when activated
+Time shown when in Time Trial mode
 
-Powerup text position adjusted
-
-Multi-Fling renamed to Multi-Sling
-
-Smooth camera movement
-
-Disabled anti-aliasing
+Altitude text color changed to yellow
 
 ### Audio
-Jump sound
-
-Wall bounce sound
-
-Rocket collect sound
-
-Multi-Fling collect sound
-
-Feather collect sound
-
-Menu/Game music
-
-Game Over music
+Background music volume changes with volume slider
 
 ### Gameplay
-Player jumps a small amount regardless if the user aims downwards or straight
-
-Player bounces when falling from high platforms to lower ones
-
-Powerups cannot be activated multiple times
-
-Platforms generate infinitely (Before, only 100 platforms were generated, leading to a maximum height of around 10,000m)
-
-Uncapped FPS values (If you want to cap it, there is a slider from 30 to 120 FPS)
-
-
-# Planned Additions
-Charge Jump
+Changed generation
 
 Moving Platforms
 
@@ -84,10 +50,14 @@ Ice Platforms
 
 Cracked Platforms
 
-Level Editor
-
-Rising Lava Gamemode
-
 Time Trial Gamemode
 
 Player color customization
+
+
+# Planned Additions
+Charge Jump
+
+Level Editor
+
+Rising Lava Gamemode
