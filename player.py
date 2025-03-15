@@ -1,27 +1,28 @@
 import pygame
 from utils import *
+from platforms import *
 
 
 class Player:
-    def __init__(self, window, position, volume):
+    def __init__(self, window, position, volume, color):
         self.window = window
         self.volume = volume
         
         self.position = position
         self.velocity = pygame.Vector2(0, 0)
-        self.gravity = 400
+        self.gravity = 800
         
         self.is_grounded = False
         
-        self.player_rect = pygame.Rect((0, 0), (16, 24))
+        self.player_rect = pygame.FRect((0, 0), (16, 24))
         self.player_rect.center = self.position
+        self.color = color
         
         self.aiming = False
         self.can_aim = True
         self.multi_sling = False
-        self.multiplier = 7
+        self.multiplier = 4
         
-        # Eyes
         self.left_eye_rect = pygame.Rect((0, 0), (2, 6))
         self.left_eye_rect.center = (self.position[0] - 2, self.position[1] - 3)
         
@@ -42,7 +43,9 @@ class Player:
                     play_sound('assets/audio/sfx/jump.ogg', self.volume * 0.25)
                 self.aiming = False
                 self.velocity = pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(self.position) + pygame.Vector2(camera_position)
-                self.velocity.y = min(self.velocity.y, -20)
+                self.velocity.x *= self.multiplier
+                self.velocity.y *= self.multiplier
+                self.velocity.y = min(self.velocity.y, -100)
         
         if self.aiming:
             aim_start = pygame.Vector2(self.position) - camera_position
@@ -59,7 +62,7 @@ class Player:
         self.right_eye_rect.move_ip(-camera_position[0], -camera_position[1])
         
         draw_player_rect = self.player_rect.move(-camera_position[0], -camera_position[1])
-        pygame.draw.rect(self.window, WHITE, draw_player_rect, border_radius = 3)
+        pygame.draw.rect(self.window, self.color, draw_player_rect, border_radius = 3)
         pygame.draw.rect(self.window, BLACK, self.left_eye_rect)
         pygame.draw.rect(self.window, BLACK, self.right_eye_rect)
     
@@ -68,36 +71,51 @@ class Player:
         if not self.is_grounded:
             self.velocity.y += self.gravity * delta_time
         
-        self.position[0] += self.velocity.x * self.multiplier * delta_time
+        self.position[0] += self.velocity.x * delta_time
         self.player_rect.centerx = self.position[0]
         
         for platform in platforms:
             if self.player_rect.colliderect(platform.rect):
-                if self.velocity.x < 0:
-                    self.position[0] = platform.rect.right + (self.player_rect.width / 2)
-                    play_sound('assets/audio/sfx/wall_bounce.ogg', self.volume)
-                elif self.velocity.x > 0:
-                    self.position[0] = platform.rect.left - (self.player_rect.width / 2)
-                    play_sound('assets/audio/sfx/wall_bounce.ogg', self.volume)
+                if not isinstance(platform, IcePlatform):
+                    if self.velocity.x < 0:
+                        self.position[0] = platform.rect.right + (self.player_rect.width / 2)
+                        play_sound('assets/audio/sfx/wall_bounce.ogg', self.volume)
+                    elif self.velocity.x > 0:
+                        self.position[0] = platform.rect.left - (self.player_rect.width / 2)
+                        play_sound('assets/audio/sfx/wall_bounce.ogg', self.volume)
                 self.velocity.x *= -0.75
                 self.player_rect.centerx = self.position[0]
                 break
         
-        self.position[1] += self.velocity.y * self.multiplier * delta_time
+        self.position[1] += self.velocity.y * delta_time
         self.player_rect.centery = self.position[1]
         
         for platform in platforms:
-            if self.player_rect.colliderect(platform.rect):
-                if self.velocity.y > 0:
-                    self.position[1] = platform.rect.top - (self.player_rect.height / 2)
-                self.velocity.x = 0
-                self.player_rect.centery = self.position[1]
-                self.can_aim = True
-                self.is_grounded = True
-                break
-            else:
-                self.can_aim = False
-                self.is_grounded = False
+            if platform.one_way:
+                if self.player_rect.colliderect(platform.rect):
+                    if self.velocity.y > 0:
+                        self.position[1] = platform.rect.top - (self.player_rect.height / 2)
+                    if isinstance(platform, MovingPlatform):
+                        self.position[0] += platform.speed * delta_time
+                        self.velocity.x = 0
+                    elif isinstance(platform, IcePlatform):
+                        self.velocity.x *= 0.99
+                    elif isinstance(platform, CrackedPlatform):
+                        platform.activated = True
+                        self.velocity.x = 0
+                    else:
+                        self.velocity.x = 0
+                    
+                    self.player_rect.centerx = self.position[0]
+                    self.player_rect.centery = self.position[1]
+                    self.can_aim = True
+                    self.is_grounded = True
+                    break
+                else:
+                    self.can_aim = False
+                    self.is_grounded = False
+        
+        self.position[0] = pygame.math.clamp(self.position[0], 5, self.window.get_width() - 5)
     
     
     def update(self, events, delta_time, camera_position, platforms):
